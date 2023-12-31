@@ -1,0 +1,253 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link 
+    rel="stylesheet" 
+    href="{% static 'css/style.css' %}"
+    >
+    <link 
+    rel="stylesheet" 
+    media="screen and (max-width: 768px)" 
+    href="{% static 'css/styles-mobile.css' %}"
+       >
+    <link 
+    rel="stylesheet" 
+    media="screen and (min-width: 769px) and (max-width: 1024px)" 
+    href="{% static 'css/styles-tablet.css' %}"
+       >
+    <link 
+    rel="stylesheet"
+     media="screen and (width: 768px)" 
+     href="{% static 'css/styles-ipadmini.css' %}"
+         >
+    <!--<link rel="stylesheet" media="screen and (min-width: 1025px)" href="styles-desktop.css">-->
+    <title>MERCADONA</title>
+
+<link 
+rel="preconnect" 
+href="https://fonts.googleapis.com"
+>
+<link 
+rel="preconnect" 
+href="https://fonts.gstatic.com" crossorigin
+>
+<link 
+href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Roboto:wght@100&display=swap" 
+rel="stylesheet"
+>
+
+<style>  
+  h1 , nav , footer { 
+  font-family: 'Caprasimo', sans-serif;
+  }
+  </style>
+</head>
+
+<body>
+ <div class="wrapper"> 
+  <header>    
+	 <div class="logo-wrapper">
+     <a href="../profile/">
+		  <img
+      src="{% static 'img/MERCADONA.jpg' %}"
+       alt="MERCADONA logo"
+        class="logo"/>	 
+     </a>
+	  </div>	   
+
+	 <h1> 
+    <a href="../profile/" style="color: #039b36de; text-decoration: none;"> MERCADONA</a> 
+   </h1> 		
+  </header>
+  
+  	<nav>
+     <ul>
+ 
+      <li><a href="../../index.html">Logout ({{user}})</a></li>
+     </ul>
+  	</nav>
+    
+    
+    <div class="content" >
+      
+      {% block content %}
+        <h1>MES ARTICLES</h1>
+        
+      <table style="border: 1px solid black;" >  
+        <tr >
+          <td style="border: 1px solid black;text-align:center">Image</td>
+          <td style="border: 1px solid black;text-align:center">Categorie</td>
+          <td style="border: 1px solid black;text-align:center">Libelle</td>
+          <td style="border: 1px solid black;text-align:center">Description</td>
+          <td style="border: 1px solid black;text-align:center">Prix initial</td>  
+          <td style="border: 1px solid black;text-align:center">Prix Final</td>         
+          <td style="border: 1px solid black;text-align:center;">Promotion</td>         
+          <td style="border: 1px solid black;text-align:center">Debut promo</td>
+          <td style="border: 1px solid black;text-align:center">Fin promo</td>
+          <td style="border: 1px solid black;text-align:center">Pourcentage promo</td>
+        </tr>
+
+        {% for n in data %}  
+        <tr>
+          <td style="border: 1px solid black;max-width:600px;text-align:center">
+          <div class="uploads">
+            <a href="https://mercadona.ovh/static/{{ n.image }}">
+             <img
+             src="https://mercadona.ovh/static/{{ n.image }}"
+              alt="{{ n.image }}"
+               class="img"
+               width="300"
+               height="200"
+               />	 
+            </a>
+           </div>	
+          </td>
+
+          <td style="border: 1px solid black;text-align:center">{{ n.categorie }}</td>
+          <td style="border: 1px solid black;text-align:center">{{ n.libelle }}</td>
+          <td style="border: 1px solid black;text-align:center">{{ n.description }}</td>
+          <td style="border: 1px solid black;text-align:center">{{ n.prix }}€</td>
+
+  
+          {% if  n.prix_final == None %} 
+          <td style="border: 1px solid black;text-align:center;font-size: 2em;font-weight:bold;">{{ n.prix }}€</td>      
+          {% else %}
+          <td style="border: 1px solid black;text-align:center;font-size: 2em;color:red;font-weight:bold;">{{ n.prix_final }}€</td>
+          {% endif %}
+            
+
+          {% if  n.promotion == False %} 
+          <td style="border: 1px solid black;text-align:center">           
+            <form method="POST" enctype="multipart/form-data" >     
+                {% csrf_token %}
+               <table width="80%" height="200vw" >
+                  {{form2.as_table}}
+                 </table>
+                  <input type="hidden" name= 'pk' value="{{ n.id }}">
+                  <input type="submit"  value="promotion" style="background-color:yellow;color:red;font-weight:bold;" >
+              </form>
+            </td>
+                   
+          {% else %}
+          <td style="border: 1px solid black;text-align:center">OUI</td>
+          {% endif %}
+
+          {% if  n.debut_promo == None %} 
+          <td style="border: 1px solid black;text-align:center"></td>        
+          {% else %}
+          <td style="border: 1px solid black;text-align:center">{{ n.debut_promo }}</td>
+          {% endif %}
+
+          {% if  n.fin_promo == None %} 
+          <td style="border: 1px solid black;text-align:center"></td>        
+          {% else %}
+          <td style="border: 1px solid black;text-align:center">{{ n.fin_promo }}</td>
+          {% endif %}
+          
+          {% if  n.pourcentage_promo == None %} 
+          <td style="border: 1px solid black;text-align:center"></td>        
+          {% else %}
+          <td style="border: 1px solid black;text-align:center">{{ n.pourcentage_promo }}%</td>
+          {% endif %}
+
+         
+        </tr>        
+        {% endfor %}
+      </table>
+      
+      {% endblock %}
+
+    </div>
+  <div class="aside">
+    <aside>
+
+        <section>
+       
+            <h1>CREATION ARTICLE</h1>
+            <form method="POST" enctype="multipart/form-data" >
+    
+    
+              <!--  <form method="POST"  action ="www.google.com"> --> 
+              
+                {% csrf_token %}
+              
+                  <table width="40%" height="100vw" >
+                    
+                      {{form.as_table}}
+                      
+                  </table>
+                  
+                  <input type="submit" value="Valider" >
+                 
+              </form>
+          </section>
+        
+      <ul>
+        <!-- 
+        <li>Articles de Mars 2020</li>
+        <li>Articles de Février 2020</li>
+        <li>Articles de Janvier 2020</li>
+        <li>Articles de Décembre 2019</li>
+        <li>Articles de Novembre 2019</li>
+        <li>Articles de Octobre 2019</li>
+        <li>Archives</li>
+        -->
+      </ul>
+    </aside>
+	</div>
+  
+  
+  <footer style="background-image: url({% static 'img/FRUITS.jpg' %})">
+    <div class="upper-footer">
+        <ul>          
+          <li><a href="../../index.html">Home</a></li>
+          <li><a href="Javascript:void(0);">A propos</a></li>
+          <li><a href="mailto:g-benayoun@live.fr">Contact</a></li>          
+        <!-- <li><a href="Javascript:void(0);">Mes autres projets</a></li>-->
+        </ul>
+      </div>
+     
+      <div class="socials">
+         <a 
+         style="text-decoration:none" 
+         href="https://www.facebook.com/mercadona/" >
+          <img 
+          src="{% static 'img/facebook.png' %}"
+          alt="Facebook logo"
+          />
+         </a> 
+         <a 
+         style="text-decoration:none" 
+         href="https://twitter.com/mercadona" >
+          <img 
+          src="{% static 'img/twitter.png' %}"       
+          alt="Twitter logo"
+          />
+         </a> 
+         <a 
+         style="text-decoration:none" 
+         href="https://www.instagram.com/mercadona" >
+          <img 
+          src="{% static 'img/instagram.png' %}" 
+          alt="Instagram logo"
+          />
+         </a>     
+      </div>
+	  
+	     <div class="watermark">
+        @2023
+      </div>	
+	</footer>
+ </div> 
+
+<script 
+src="script.js"
+>
+</script>
+
+</body>
+</html>
